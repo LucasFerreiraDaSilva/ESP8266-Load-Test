@@ -63,7 +63,7 @@ def writePingStatistic(output):
     
     with open("latency_results.txt", "a") as myfile:
         myfile.write(results)
-
+'''
 print("-------- Teste de velocidade de transferência --------\n")
 print("Coletando dados ...\n")
 
@@ -96,6 +96,7 @@ while not resp.closed:
 
 print("Os dados coletados foram armazenados no arquivo \"speed_results.csv\"\n")
 print("Tempo decorrido: "+str(duration)+" segundos.\n")
+'''
 
 # Collect latency data
 print("-------- Estatísticas de latência --------\n")

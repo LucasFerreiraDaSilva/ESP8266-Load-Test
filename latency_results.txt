@@ -1,0 +1,10 @@
+Transmissão:
+Pacotes transmitidos: 1000
+Pacotes recebidos: 996
+Pacotes perdidos: 0%
+
+Estatísticas:
+Menor tempo: 0.992 ms
+Tempo médio: 4.197 ms
+Maior tempo: 187.789 ms
+Desvio padrão: 9.637 ms
