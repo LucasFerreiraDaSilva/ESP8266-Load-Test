@@ -6,12 +6,14 @@ import time
 
 # Global variables of the control
 data_size = 0
+data_size_ant = 0
 stopClient = False
 
-host = "esp-8266.local"   # Host server
-sample_interval = 1       # Speed data collection interval, in seconds
-duration = 5              # Duration of the speed test, in seconds
-ping_npackages = 10       # Number of packets to be transferred in latency test
+host = "esp-8266.local"   # Server host
+port = 80                 # Server port
+sample_interval = 10      # Speed data collection interval, in seconds
+duration = 18000          # Duration of the speed test, in seconds (18000 = 5 hours)
+ping_npackages = 1000     # Number of packets to be transferred in latency test
 
 
 # Write the file header
@@ -23,11 +25,13 @@ def writeFileHeader():
 def collectSpeed(stopped, interval):
     while not stopped.wait(interval):
         global data_size
-        speed = data_size/1000/interval
+        global data_size_ant
+        speed = (data_size-data_size_ant)/1000/interval
+        data_size_ant = data_size                       
+        data_size = 0
 
         with open("speed_results.csv", "a") as resFile:
             resFile.write(str(time.time())+", "+str(speed)+"\n")
-        data_size = 0
 
 # Stop the execution of the speed test
 def stopExecution():
@@ -64,9 +68,11 @@ print("Coletando dados ...\n")
 writeFileHeader()
 
 # Start the connection
-conn = http.client.HTTPSConnection(host)
-conn.request("GET", "/")
+conn = http.client.HTTPConnection(host, port)
+conn.request("GET", host)
 resp = conn.getresponse()
+
+
 
 # Duration time control of the speed benchmark
 timer = Timer(duration, stopExecution)
@@ -79,7 +85,7 @@ t.start()
 
 # Connection loop
 while not resp.closed:
-    data_size += len(resp.read())
+    data_size += len(resp.read(1000)) # leitura em bytes do tamanho do buffer transmitido pelo servidor
     if stopClient:
         stopFlag.set()
         resp.close()
