@@ -38,8 +38,8 @@ def stopExecution():
     global stopClient
     stopClient = True
 
-# Show ping statistics
-def showPingStatistic(output):
+# Write ping statistics in file
+def writePingStatistic(output):
     pac = output[0].split(',')
     transmitted = pac[0].split(' ')[0]
     received = pac[1].split(' ')[1]
@@ -51,15 +51,18 @@ def showPingStatistic(output):
     time_max = stat.split('/')[2]
     stddev = stat.split('/')[3].replace('ms', '')
 
-    print("\nTransmissão:\n")
-    print("Pacotes transmitidos: "+transmitted)
-    print("Pacotes recebidos: "+received)
-    print("Pacotes perdidos: "+loss)
-    print("\nEstatísticas:\n")
-    print("Menor tempo: "+time_min+" ms")
-    print("Tempo médio: "+time_avg+" ms")
-    print("Maior tempo: "+time_max+" ms")
-    print("Desvio padrão: "+stddev+" ms")
+    results = "Transmissão:\n"
+    results += "Pacotes transmitidos: "+transmitted+"\n"
+    results += "Pacotes recebidos: "+received+"\n"
+    results += "Pacotes perdidos: "+loss+"\n"
+    results += "\nEstatísticas:\n"
+    results += "Menor tempo: "+time_min+" ms\n"
+    results += "Tempo médio: "+time_avg+" ms\n"
+    results += "Maior tempo: "+time_max+" ms\n"
+    results += "Desvio padrão: "+stddev+" ms\n"
+    
+    with open("latency_results.txt", "a") as myfile:
+        myfile.write(results)
 
 print("-------- Teste de velocidade de transferência --------\n")
 print("Coletando dados ...\n")
@@ -101,5 +104,7 @@ print("Coletando dados ...\n")
 ping = subprocess.check_output(["ping", str(host), "-c", str(ping_npackages)])
 ping_output = ping.decode("utf-8").split("statistics ---\n")[1].split("\n")
 
-showPingStatistic(ping_output)
+writePingStatistic(ping_output)
+
+print("Os dados coletados foram armazenados no arquivo \"latency_results.txt\"\n")
 
